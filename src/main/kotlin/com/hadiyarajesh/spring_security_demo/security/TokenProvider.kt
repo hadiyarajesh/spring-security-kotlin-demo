@@ -3,21 +3,19 @@ package com.hadiyarajesh.spring_security_demo.security
 import com.hadiyarajesh.spring_security_demo.app.exception.InvalidJwtException
 import io.jsonwebtoken.*
 import jakarta.servlet.http.HttpServletRequest
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
-import java.lang.Exception
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 import java.util.*
-import java.util.function.Function
 
 @Component
 class TokenProvider(
     private val securityProperties: SecurityProperties
 ) {
     private fun extractAllClaims(token: String): Claims {
-        return Jwts.parser().setSigningKey(securityProperties.secret).parseClaimsJws(token).body
+        return Jwts.parser()
+            .setSigningKey(securityProperties.secret)
+            .parseClaimsJws(token)
+            .body
     }
 
     private fun <T> extractClaim(token: String, claimsResolver: (Claims) -> T): T {
@@ -25,8 +23,8 @@ class TokenProvider(
         return claimsResolver(claims)
     }
 
-    fun extractUsername(token: String): String {
-        return extractClaim(token) { obj: Claims -> obj.subject }
+    fun extractEmail(token: String): String {
+        return extractClaim(token) { claims -> claims.subject }
     }
 
     private fun generateTokenFromClaims(
@@ -45,13 +43,13 @@ class TokenProvider(
     }
 
     fun generateToken(
-        userId: Long,
         email: String,
         roles: List<String>
     ): String {
-        val claims = Jwts.claims().setSubject(email).apply {
-            this["role"] = roles
-        }
+        val claims = Jwts.claims()
+            .setSubject(email).apply {
+                this["role"] = roles
+            }
         return generateTokenFromClaims(claims, securityProperties.expiration)
     }
 
@@ -61,7 +59,9 @@ class TokenProvider(
 
     fun validateToken(token: String): Boolean {
         try {
-            Jwts.parser().setSigningKey(securityProperties.secret).parseClaimsJws(token)
+            Jwts.parser()
+                .setSigningKey(securityProperties.secret)
+                .parseClaimsJws(token)
             return true
         } catch (e: MalformedJwtException) {
             throw InvalidJwtException("JWT token is malformed.")
@@ -72,8 +72,9 @@ class TokenProvider(
         }
     }
 
-    fun getTokenFromHeader(httpServletRequest: HttpServletRequest): String? {
-        val bearerToken = httpServletRequest.getHeader("Authorization")
+    fun getTokenFromHeader(request: HttpServletRequest): String? {
+        val bearerToken = request.getHeader("Authorization")
+
         return if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             bearerToken.substring(7, bearerToken.length)
         } else {
@@ -81,9 +82,10 @@ class TokenProvider(
         }
     }
 
-    fun getClaimsFromToken(token: String): Jws<Claims>? {
+    fun getClaimsFromToken(token: String): Claims? {
         return Jwts.parser()
             .setSigningKey(securityProperties.secret)
             .parseClaimsJws(token)
+            ?.body
     }
 }

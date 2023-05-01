@@ -14,10 +14,8 @@ import io.jsonwebtoken.Claims
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import java.io.Serializable
 
 @Service
 class AuthService(
@@ -43,7 +41,11 @@ class AuthService(
             )
         )
 
-        val token = getToken(userId = user.id!!, username = user.email, roles = user.roles.map { it.roleName.name })
+        val token = getToken(
+            userId = user.id!!,
+            username = user.email,
+            roles = user.roles.map { it.roleName.name }
+        )
 
         return UserAndToken(user = user, token = token)
     }
@@ -55,16 +57,21 @@ class AuthService(
 
         SecurityContextHolder.getContext().authentication = authentication
 
-        val user = userRepository.findByEmail(authentication.name) ?: throw ResourceNotFoundException("User not found")
+        val user = userRepository.findByEmail(authentication.name)
+            ?: throw ResourceNotFoundException("User with email ${signInDto.email} not found")
 
-        val token = getToken(userId = user.id!!, username = user.email, roles = user.roles.map { it.roleName.name })
+        val token = getToken(
+            userId = user.id!!,
+            username = user.email,
+            roles = user.roles.map { it.roleName.name }
+        )
 
         return UserAndToken(user = user, token = token)
     }
 
 
     fun getToken(userId: Long, username: String, roles: List<String> = emptyList()): String {
-        return tokenProvider.generateToken(userId = userId, email = username, roles = roles)
+        return tokenProvider.generateToken(email = username, roles = roles)
     }
 
     fun getRefreshToken(claims: Claims): String {

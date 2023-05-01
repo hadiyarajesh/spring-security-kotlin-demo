@@ -24,7 +24,8 @@ class UserService(
     }
 
     fun upgradeToAdmin(email: String): User {
-        val user = userRepository.findByEmail(email) ?: throw ResourceNotFoundException("User $email not found")
+        val user =
+            userRepository.findByEmail(email) ?: throw ResourceNotFoundException("User with email $email not found")
 
         val adminRole =
             roleService.findRoleByName(RoleName.ADMIN) ?: throw ResourceNotFoundException("Admin role not found")

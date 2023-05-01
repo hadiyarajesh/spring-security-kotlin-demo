@@ -32,7 +32,6 @@ class AuthController(
     @GetMapping(EndPoint.REFRESH_TOKEN)
     fun refreshToken(request: HttpServletRequest): ResponseEntity<ApiResponse.Success<Map<String, String>>> {
         val claims = request.getAttribute(Constant.CLAIMS) as Claims
-
         val token = authService.getRefreshToken(claims = claims)
 
         return ResponseEntity.ok(ApiResponse.Success(true, mapOf("token" to token)))

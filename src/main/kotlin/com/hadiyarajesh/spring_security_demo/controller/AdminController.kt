@@ -21,6 +21,7 @@ class AdminController(
     ): ResponseEntity<ApiResponse.Success<Map<String, User>>> {
         val email = authentication.principal as String
         val user = adminService.getAdminDetails(email = email)
+
         return ResponseEntity.ok(ApiResponse.Success(status = true, data = mapOf("user" to user)))
     }
 }

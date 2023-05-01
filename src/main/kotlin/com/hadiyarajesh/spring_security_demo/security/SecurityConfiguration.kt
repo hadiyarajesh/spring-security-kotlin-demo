@@ -17,7 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import java.time.LocalDateTime
 
 @Configuration
@@ -29,19 +28,20 @@ class SecurityConfiguration(
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
         http
-            .csrf { csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).disable() }
-//            .disable() // Why to disable CSRF? Read here -> https://docs.spring.io/spring-security/reference/features/exploits/csrf.html#csrf-when
+//            .csrf { csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).disable() }
+            .csrf()
+            .disable() // Why to disable CSRF? Read here -> https://docs.spring.io/spring-security/reference/features/exploits/csrf.html#csrf-when
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeHttpRequests()
-//            .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
             .requestMatchers(PathRequest.toH2Console()).permitAll()
             .requestMatchers(EndPoint.AUTH_ROOT_PATH + EndPoint.SIGN_UP, EndPoint.AUTH_ROOT_PATH + EndPoint.SIGN_IN)
             .permitAll()
             .requestMatchers("${EndPoint.ADMIN_ROOT_PATH}/**").hasAuthority(RoleName.ADMIN.name)
             .anyRequest().authenticated()
 
-        http.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter::class.java)
+        http
+            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter::class.java)
             .addFilterBefore(exceptionHandlerFilter, SecurityFilter::class.java)
             .exceptionHandling { configurer ->
                 configurer.authenticationEntryPoint { request, response, authException ->

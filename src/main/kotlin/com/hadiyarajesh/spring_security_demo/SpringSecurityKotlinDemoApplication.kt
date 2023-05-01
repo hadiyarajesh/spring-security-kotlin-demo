@@ -25,11 +25,14 @@ class SpringSecurityKotlinDemoApplication {
         passwordEncoder: PasswordEncoder
     ) = CommandLineRunner { args ->
         logger.info("Setting up the initial database...")
+
         setupInitialDatabase(
             roleService = roleService,
             userService = userService,
             passwordEncoder = passwordEncoder
         )
+
+        logger.info("Database initialization completed")
     }
 }
 

@@ -11,6 +11,6 @@ class MyUserDetailsService(
     private val userRepository: UserRepository
 ) : UserDetailsService {
     override fun loadUserByUsername(email: String): UserDetails {
-        return userRepository.findByEmail(email) ?: throw ResourceNotFoundException("User $email not found")
+        return userRepository.findByEmail(email) ?: throw ResourceNotFoundException("User with email $email not found")
     }
 }

@@ -23,7 +23,7 @@ class SecurityFilter(
         val token = tokenProvider.getTokenFromHeader(request)
 
         if (token != null && tokenProvider.validateToken(token)) {
-            val email = tokenProvider.extractUsername(token)
+            val email = tokenProvider.extractEmail(token)
             val userDetails = myUserDetailsService.loadUserByUsername(email)
             val authentication =
                 UsernamePasswordAuthenticationToken(userDetails.username, null, userDetails.authorities)
@@ -35,7 +35,7 @@ class SecurityFilter(
             request.getAttribute(Constant.CLAIMS)
                 ?: request.setAttribute(
                     Constant.CLAIMS,
-                    tokenProvider.getClaimsFromToken(token!!)?.body
+                    tokenProvider.getClaimsFromToken(token!!)
                 )
         }
 
