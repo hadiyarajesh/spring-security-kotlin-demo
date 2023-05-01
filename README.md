@@ -21,4 +21,4 @@ This is a sample project to demonstrate the use of Spring Security 6 with Spring
 Contributions are welcome! Please feel free to submit a pull request.
 
 ## License
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](https://github.com/hadiyarajesh/spring-security-kotlin-demo/blob/main/LICENSE).
