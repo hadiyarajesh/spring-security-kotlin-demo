@@ -1,0 +1,31 @@
+### Sign up
+POST http://localhost:8080/auth/signup
+Content-Type: application/json
+
+{
+  "fullName": "Test User",
+  "email": "test-user@test.com",
+  "password": "test-user-password"
+}
+
+### Sign in as default user
+POST http://localhost:8080/auth/signin
+Content-Type: application/json
+
+{
+  "email": "user@test.com",
+  "password": "user-password"
+}
+
+### Sign in as default admin
+POST http://localhost:8080/auth/signin
+Content-Type: application/json
+
+{
+  "email": "admin@test.com",
+  "password": "admin-password"
+}
+
+### Get refresh token
+GET http://localhost:8080/auth/refresh-token
+Authorization: Bearer {{USER_AUTH_TOKEN}}

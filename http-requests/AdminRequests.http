@@ -1,0 +1,3 @@
+### Get current admin details
+GET http://localhost:8080/admin/details
+Authorization: Bearer {{ADMIN_AUTH_TOKEN}}

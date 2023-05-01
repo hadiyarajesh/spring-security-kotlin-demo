@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: "jdbc:h2:file:~/security_database;DB_CLOSE_ON_EXIT=FALSE"
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: secret-password
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+
+app:
+  security:
+    secret: "2b44b0b00fd822d8ce753e54dac3dc4e06c2725f7db930f3b9924468b53194dbccdbe23d7baa5ef5fbc414ca4b2e64700bad60c5a7c45eaba56880985582fba4"
+    expiration: 36000000
